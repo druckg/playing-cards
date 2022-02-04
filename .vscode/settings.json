@@ -1,0 +1,7 @@
+{
+    "python.linting.pylamaEnabled": true,
+    "python.linting.enabled": true,
+    "python.linting.pylamaArgs": [
+        "--ignore=E501"
+    ]
+}
