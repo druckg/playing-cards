@@ -105,13 +105,22 @@ class Table():
             self.deck.returnCard(card)
 
 
+class Button(tk.Button):
+    def __init__(self, window: tk.Tk, text: str, command):
+        super().__init__(window, text=text)
+        self['command'] = command
+
+
+class CardImage(ImageTk.PhotoImage):
+    def __init__(self, imageFileName: str, width: int, height: int):
+        super().__init__(Image.open(imageFileName).resize((width, height)))
+
+
 class App(tk.Tk):
     def __init__(self):
         super().__init__()
-        self.handCards: list[tk.Frame] = []
-        self.deckCards: list[tk.Frame] = []
-        self.deckCardImages: list[ImageTk.PhotoImage] = []
-        self.handCardImages: list[ImageTk.PhotoImage] = []
+        self.deckCardImages: list[CardImage] = []
+        self.handCardImages: list[CardImage] = []
         self.table = Table(self)
 
         # set window properties
@@ -139,20 +148,17 @@ class App(tk.Tk):
         self.buildDeck()
 
         # create shuffle button
-        self.btn_shuffle = tk.Button(self, text='Shuffle')
-        self.btn_shuffle['command'] = self.shuffle_clicked
+        self.btn_shuffle = Button(self, 'Shuffle', self.shuffle_clicked)
         self.btn_shuffle.grid(row=4, column=11, rowspan=1,
                               columnspan=1, sticky='nsew', padx=10, pady=10)
 
         # create draw button
-        self.btn_draw = tk.Button(self, text='Draw')
-        self.btn_draw['command'] = self.draw_clicked
+        self.btn_draw = Button(self, 'Draw', self.draw_clicked)
         self.btn_draw.grid(row=5, column=11, rowspan=1,
                            columnspan=1, sticky='nsew', padx=10, pady=10)
 
         # create return button
-        self.btn_return = tk.Button(self, text='Return')
-        self.btn_return['command'] = self.return_clicked
+        self.btn_return = Button(self, 'Return', self.return_clicked)
         self.btn_return.grid(row=6, column=11, rowspan=1,
                              columnspan=1, sticky='nsew', padx=10, pady=10)
 
@@ -181,8 +187,7 @@ class App(tk.Tk):
         for i in range(0, numDeckCards):
             cardIndex = self.table.getDeckCard(i)
             fileName = CardMap.getCardFileName(cardIndex)
-            self.deckCardImages.append(ImageTk.PhotoImage(
-                Image.open(fileName).resize((50, 80))))
+            self.deckCardImages.append(CardImage(fileName, 50, 80))
 
         # create deck layout
         for i in range(0, numDeckCards):
@@ -201,8 +206,7 @@ class App(tk.Tk):
         for i in range(0, numHandCards):
             cardIndex = self.table.getHandCard(i)
             fileName = CardMap.getCardFileName(cardIndex)
-            self.handCardImages.append(ImageTk.PhotoImage(
-                Image.open(fileName).resize((120, 200))))
+            self.handCardImages.append(CardImage(fileName, 120, 200))
 
         # create hand layout
         for i in range(0, numHandCards):
